@@ -23,11 +23,6 @@ def short_cuti(tau_i,t):
 	return ri,Pi
 
 def rbf(tau_i,tau_j,ts,t):
-	# if fmod(t-tau_i.Di,tau_i.Ti)!=0:
-	# 	'''
-	# 	we only need to check d_{i,k}
-	# 	'''
-	# 	raise NameError('not correct t')
 	if ts<t-tau_i.Di or ts>t:
 		raise NameError('not correct ts')
 	
@@ -41,7 +36,7 @@ def rbf(tau_i,tau_j,ts,t):
 		print "false prioity assignment"
 		raise NameError('no such function')
 
-def rbf_1(tau_i,tau_j,ts,t):
+def rbf_1(tau_i,tau_j,ts,t): # optimization technique  one
 # when j<i i.e., tau_j has higher o_priority
 	if tau_j.o_prio<tau_i.o_prio:
 		return rbf_A_1(tau_i,tau_j,ts,t)
@@ -49,7 +44,7 @@ def rbf_1(tau_i,tau_j,ts,t):
 	elif tau_j.o_prio>tau_i.o_prio: 
 		return rbf_B_1(tau_i,tau_j,ts,t)
 	
-def rbf_2(tau_i,tau_j,ts,t):
+def rbf_2(tau_i,tau_j,ts,t): # optimization technique  two
 # when j<i i.e., tau_j has higher o_priority
 	if tau_j.o_prio<tau_i.o_prio:
 		return rbf_A_2(tau_i,tau_j,ts,t)
@@ -58,10 +53,9 @@ def rbf_2(tau_i,tau_j,ts,t):
 		return rbf_B_2(tau_i,tau_j,ts,t)
 	
 
-def rbf_A(tau_i,tau_j,ts,t):
+def rbf_A(tau_i,tau_j,ts,t): 	# when j<i i.e., tau_j has higher o_priority
 	nj,rj,Pj=short_cutj(tau_j,ts)
 	ri,Pi=short_cuti(tau_i,t)
-	
 	if Pj<=Pi: 
 		req=nj*tau_j.Ci+min(tau_j.Ci,ts-rj)
 		return	req 
@@ -112,7 +106,7 @@ def rbf_A_2(tau_i,tau_j,ts,t):
 
 
 
-def rbf_B(tau_i,tau_j,ts,t):
+def rbf_B(tau_i,tau_j,ts,t): # when ij< i.e., tau_i has higher o_priority
 	nj,rj,Pj=short_cutj(tau_j,ts)
 	ri,Pi=short_cuti(tau_i,t)
 	if Pi<=Pj and rj<=ri: 
@@ -207,34 +201,34 @@ def dual_pri_test_task(tau_i,tau_rest):
 	return True
 
 def dual_pri_test(taskset):
-	# flag=True
-	# empty=False
-	# while flag==True:
-	# 	flag=False
-	# 	for tau_i in taskset:
-	# 		tau_rest=copy(taskset)
-	# 		tau_rest.remove(tau_i)
-	# 		if dual_pri_test_task(tau_i,tau_rest)==False:
-	# 			if tau_i.pi>2:
-	# 				tau_i.pi-=1
-	# 				flag=True
-	# 				break
-	# 			else:
-	# 				return False
-	# return True
-	for tau_i in taskset:
-		tau_rest=copy(taskset)
-		tau_rest.remove(tau_i)
-		if dual_pri_test_task(tau_i,tau_rest)==False:
-			return False
+	flag=True
+	empty=False
+	while flag==True:
+		flag=False
+		for tau_i in taskset:
+			tau_rest=copy(taskset)
+			tau_rest.remove(tau_i)
+			if dual_pri_test_task(tau_i,tau_rest)==False:
+				if tau_i.pi>2:
+					tau_i.pi-=1
+					flag=True
+					break
+				else:
+					return False
 	return True
+	# for tau_i in taskset:
+	# 	tau_rest=copy(taskset)
+	# 	tau_rest.remove(tau_i)
+	# 	if dual_pri_test_task(tau_i,tau_rest)==False:
+	# 		return False
+	# return True
 
  
 
 
 x=0
 for i in xrange(0,10):
-	taskset=taskset_generator(0.95,10,100,1)
+	taskset=taskset_generator(0.8,10,100,1)
 	pri_assign(taskset)
 	promotion_set(taskset)
 	if dual_pri_test(taskset)==True:

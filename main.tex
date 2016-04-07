@@ -89,33 +89,41 @@ This corollary is a direct deduction from Lemma~\ref{lemma:pattern}.
 From Corollary~\ref{corollary:condition}, we know  that as along as we can guarantee that $\forall~\tau_i\in \tau:~\forall~t:$ no deadline miss happens with the worst case release pattern,  then we can declare that the task system $\tau$ is schedulable by the dual priority scheduling algorithm. Therefore  in the simplest case,  an exact but computational expensive schedulability test for dual priority scheduling algorithm could be derived by simulating the behavior of the system with the worst case release pattern. 
 
 
-To reduce the complexity, we need a more efficient test to determine whether $\tau_i\in\tau$ is schedulable when jobs are released with the worst case release in Lemma~\ref{lemma:pattern}. Let $ibf_i(\tau-\tau_i,t')$ (ibf is short for interference bound function) denote maximum possible resource consumed by all other tasks in the system except $\tau_i$ during the time interval $[0,t']$, and let $dbf(\tau_i,t)$ denotes the maximum execution requirement of $\tau_i$ during $[0,t]$,  when all tasks are released with worst case pattern in Lemma~\ref{lemma:pattern}.\footnote{Note that we only need to concern about the worst case release pattern of the two functions.}  Therefore the following theorem can be used to determine whether $\tau_i\in \tau$ is schedulable when all jobs in the system is released in the worst case release pattern.
+To reduce the complexity, we need a more efficient test to determine whether $\tau_i\in\tau$ is schedulable when jobs are released with the worst case release in Lemma~\ref{lemma:pattern}. Let $ibf_i(\tau_j,t')$ (ibf is short for interference bound function) denote maximum possible resource consumed by $\tau_j\in\tau-\tau_j$ in the system  during the time interval $[0,t']$, and let $dbf(\tau_i,t)$ denotes the maximum execution requirement of $\tau_i$ during $[0,t]$,  when all tasks are released with worst case pattern in Lemma~\ref{lemma:pattern}.\footnote{Note that the two functions are specific for the worst case pattern.}  Therefore the following theorem can be used to determine whether $\tau_i\in \tau$ is schedulable when all jobs in the system is released in the worst case release pattern.
 }
 \begin{theorem}
+\label{theorem:1}
 $\tau_i$ would not experience any deadline miss with the worst case release pattern on a single processor by the dual priority scheduling algorithm if the following condition holds:
 \begin{equation}
 \label{eq:1}
-\forall~t~:\exists~t':~dbf(\tau_i,t)+ibf_i(\tau-\tau_i,t')\leq t'
+\forall~t~:\exists~t'\in[t-D_i, t]:~dbf(\tau_i,t)+ibf_i(\tau-\tau_i,t')\leq t'
 \end{equation} 
+where \[ibf_i(\tau-\tau_i,t')=\sum_{\tau_j\in \tau-\tau_i}ibf_i(\tau_j,t')\].
 \end{theorem}
 \begin{proof}
 We can prove the statement that if $\tau_i$ is not schedulable with the worst case release pattern, then Equation~\ref{eq:1} would not hold. Suppose that $\tau_i$ is not schedulable then there are legal event sequences in which $\tau_i$ misses some deadline when $\tau_i$ is assigned with the current priority and promotion point. Let $S'$ denote such a sequence where $\tau_i$ misses deadline at the earliest time at $t$.
 
-It must be the cases that during $[0,t]$ some tasks are executing because otherwise the time interval between the last idle instant to $t$ could also construct such a sequence. Then it must be that during the time interval $[0,t']~(\forall t')$, other tasks have consumed an amount of resource more than 
+It must be the cases that during $[0,t]$ some tasks are executing because otherwise the time interval between the last idle instant to $t$ could also construct such a sequence. Then it must be that during the time interval $[0,t']$, other tasks have consumed an amount of resource more than 
 \[
 ibf_i(\tau-\tau_i,t')>t'-dbf(\tau_i,t)
 \]
 which contradicts the Equation~\ref{eq:1}.
 \end{proof}
+With Theorem~\ref{theorem:1}, we can use the following test to whether a task system $\tau$ is schedulable by the dual priority scheduling algorithm.
+\begin{theorem}
+A task system $\tau$ is schedulable by the dual priority scheduling on unit-speed uniprocessor if the following hold: $\forall \tau_i\in \tau:~\forall~t:~\exists~t'\in[t-D_i, t]:~$
+\begin{equation}
+dbf(\tau_i,t)+ibf_i(\tau-\tau_i,t')\leq t'
+\end{equation}
+\end{theorem}
+
+
+
+In the worst case release pattern, we can easily calculate the exact value of $dbf(\tau_i,t)$. However the exact value of $ibf_i(\tau-\tau_i,t')$ is not trivial except we simulate the system.  As a result, here we use an upper bound of the actual interference to represent  $ibf_i(\tau_j,t')$ instead.
 
 
 
 
-
-
-
-
-% \my{Existing request bound function  $rbf_i(\tau_j,t')$  denotes the maximum cumulative execution requirement by jobs of $\tau_j$ by $t'$ that have ready times within any time interval of duration $t'$.  However this is not the case in dual priority scheduling as shown in the following example.}
 
 % \begin{example}
 % As shown in the Figure~1, when $r_i\leq t'\leq P_i$, the execution requirement of $J_{j,k}$ is $C_j$ because $\tau_i$  would execute only after $J_{j,k}$ finishes. However, when $P_i\leq t'\leq P_j$,  the time $J_{j,k}$ deny processor from $\tau_i$ is equal the time that $J_{j,k}$ has already executed, because $\tau_i$ has higher priority than $\tau_j$ during $[P_i,P_j]$.  This is a significantly different from the  static priority scheduling.
@@ -133,64 +141,26 @@ which contradicts the Equation~\ref{eq:1}.
 
 
 
+Here we first present some notations that  will be used later in the paper.
+\begin{table}[h]
+\caption{Notations}
+\label{tab:x}
+\center
+\begin{tabular}{|l|l|l|l|}
+ \hline
+ $m=\lfloor \frac{t'}{T_j}\rfloor$ & $r_{j,m}=m\times T_j$ &$P_{j,m}=m\times T_j+p_j$ \\
+ \hline
+$P_{i,n}=t-D_i+p_i$ & $r_{i,n}=P_{i,n}-p_i$ &$[a]_0=\max(a,0)$\\
+ \hline
+$m'=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_{j,m'}=m'\times T_j$& \\
+ \hline
+	$m''=\lfloor \frac{P_{i,n}}{T_j}\rfloor$ &  $r_{j,m''}=m''\times T_j$&	\\
+  \hline
+\end{tabular}
+\end{table}
 
-% For dual priority scheduling, then we can have the following theorem.
-% \begin{theorem}
-% In dual priority scheduling, $\tau_i$ is schedulable on a single processor if  the following condition holds:
-% \begin{equation}
-% \label{eq:1}
-% \forall t~:\exists t':dbf(\tau_i,t)+\sum_{\tau_j\in\{\tau-\tau_j\}}rbf_i(\tau_j,t')\leq t'
-% \end{equation} 
-% where $rbf_i(\tau_j,t')$ upper bounds the resource that $\tau_j$ has consumed by $t'$ with corresponding priority and promotion point.
-% \end{theorem}
-% \begin{proof}
-% We can prove the statement that if $\tau_i$ is not schedulable then Equation~\ref{eq:1} would not hold. Suppose that $\tau_i$ is not schedulable then there are legal event sequences in which $\tau_i$ misses some deadline when $\tau_i$ is assigned with the current priority and promotion point. Let $S'$ denote such a sequence where $\tau_i$ misses deadline at the earliest time at $t$ (no deadline misses happens earlier).
+\section{Schedulability Test}
 
-% It must be the cases that during $[0,t]$ some tasks are executing because otherwise the time interval between the last idle instant to $t$ could also construct such a sequence. Then it must be that during the time interval $[0,t']~(\forall t')$, other tasks have consumed an amount of resource more than 
-% \[
-% \sum_{\tau_j\in\{\tau-\tau_j\}}rbf_i(\tau_j,t')>t'-dbf(\tau_i,t)\Rightarrow dbf(\tau_i,t)>\max_{t'}(t'-\sum_{\tau_j\in\{\tau-\tau_j\}}rbf_i(\tau_j,t'))
-% \]
-% which contradicts the Equation~\ref{eq:1}.
-% \end{proof}
-
-% \begin{lemma}[Worst Case Pattern]
-% For a fixed $t$ and $t'$,  $\tau_j\in\{\tau-\tau_i\}$  can consume maximum resource during $[0,t']$, and hence $\tau_i$ can receive minimal resource by $t'$ when it is first released at $0$ and all jobs are released as soon as possible with period $T_i$. 
-% \end{lemma}
-% \begin{proof}
-% Suppose there is no deadline miss happens earlier, and as we shift the release pattern of $\tau_j$ left, $J_{j,1}$ will no longer request for any resource while the increment of the resource consumed by other jobs of $\tau_j$ is bounded by $C_j$. On the other hand, as we shift the pattern right, the promotion point of $J_{j,k}$  increases and hence $J_{j,k}$ is less likely to has higher priority than $\tau_i$ (and hence consume the resource).
-% \end{proof}
-
-
-
-
-
- 
-% \begin{table}[h]
-% \caption{Notations}
-% \label{tab:x}
-% \large
-% \center
-% \begin{tabular}{|l|l|l|l|}
-%  \hline
-%  $n_j=\lfloor \frac{t'}{T_j}\rfloor$ & $r_j=n_j\times T_j$ &$P_j=n_j\times T_j+p_j$ \\
-%  \hline
-% $P_i=t-(D_i-p_i)$ & $r_i=P_i-p_i$ &$[a]_0=\max(a,0)$\\
-%  \hline
-% $n_j^s=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_j^s=n_j^s\times T_j$& \\
-%  \hline
-%  $r_j^w=n_j^w\times T_j$ &	$n_j^w=\lfloor \frac{P_i}{T_j}\rfloor$ &	\\
-%   \hline
-% \end{tabular}
-% \end{table}
-
-% \section{Schedulability Test}
-% \begin{theorem}
-% A task system $\tau$ is schedulable by dual priority scheduling if the following hold:
-% \begin{equation}
-% \forall \tau_i\in \tau, t: \exists t':
-% dbf(\tau_i,t)+\sum_{\tau_j\in\{\tau-\tau_j\}}rbf_i(\tau_j,t')\leq t'
-% \end{equation}
-% \end{theorem}
 
 % Here we also derive $rbf_{i}^1(\tau_j,t')$ which denotes \ae{maximum possible} execution that $\tau_j$ has received after $r_i$,  and $rbf_{i}^2(\tau_j,t')$ which denotes \ae{maximum possible} execution  that $\tau_j$ has received after $P_i$ (if $t'>P_i$).  Assuming no deadline miss happens earlier, the total execution before $r_i$ and $P_i$ should not exceed $r_i$ and $P_i$, respectively. As a result, we are able to tighten the schedulability test by bounding the total execution before $r_i$ and $P_i$ by $r_i$ and $P_i$, respectively.
 

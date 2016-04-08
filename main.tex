@@ -141,6 +141,12 @@ In the worst case release pattern, we can easily calculate the exact value of $d
 
 
 
+\section{Interference Bound Function}
+
+
+% Here we also derive $rbf_{i}^1(\tau_j,t')$ which denotes \ae{maximum possible} execution that $\tau_j$ has received after $r_i$,  and $rbf_{i}^2(\tau_j,t')$ which denotes \ae{maximum possible} execution  that $\tau_j$ has received after $P_i$ (if $t'>P_i$).  Assuming no deadline miss happens earlier, the total execution before $r_i$ and $P_i$ should not exceed $r_i$ and $P_i$, respectively. As a result, we are able to tighten the schedulability test by bounding the total execution before $r_i$ and $P_i$ by $r_i$ and $P_i$, respectively.
+
+In the worst case pattern, given a time interval length $t$, we can easily calculate the release time and promotion point of each job.
 Here we first present some notations that  will be used later in the paper.
 \begin{table}[h]
 \caption{Notations}
@@ -159,28 +165,22 @@ $m'=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_{j,m'}=m'\times T_j$& \\
 \end{tabular}
 \end{table}
 
-\section{Schedulability Test}
 
+\subsection{$ibf_i(\tau_j,t')$ when $j<i$}
+If the index $j$ is smaller than index $i$, it means $\tau_j$ has higher origin  priority than $\tau_i$.
+\begin{figure}[h!]
+ \centering
+\includegraphics[scale=0.7]{Figure/C1}  
+\caption{$ P_j\leq P_i$}
+  \label{fig:case1}
+\end{figure}
 
-% Here we also derive $rbf_{i}^1(\tau_j,t')$ which denotes \ae{maximum possible} execution that $\tau_j$ has received after $r_i$,  and $rbf_{i}^2(\tau_j,t')$ which denotes \ae{maximum possible} execution  that $\tau_j$ has received after $P_i$ (if $t'>P_i$).  Assuming no deadline miss happens earlier, the total execution before $r_i$ and $P_i$ should not exceed $r_i$ and $P_i$, respectively. As a result, we are able to tighten the schedulability test by bounding the total execution before $r_i$ and $P_i$ by $r_i$ and $P_i$, respectively.
+\textbf{Case 1 ( $P_{j,m}\leq P_{i,n}$)} as shown in  Figure~\ref{fig:case1}: Job $J_{i,n}$ always has lower priority than  $J_{j,m}$. Thus   the maximum possible resource consumed by $\tau_{j}$  before $t'$ is  bounded by
+	\begin{align*}
+		rbf_i(\tau_j,t')=m.C_j +\min(C_j,t'-r_{j,m})
+	\end{align*}
+ 
 
-
-
-
-% \subsection{$rbf_i(\tau_j,t')$ when $j<i$}
-% \begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=1]{Figure/C1}  
-% \caption{$ P_j\leq P_i$}
-%   \label{fig:case1}
-% \end{figure}
-% \textbf{Case 1 ( $P_j\leq P_i$)~as shown in  Figure~\ref{fig:case1}:} 
-
-% The promotion point of $P_i$ is greater than $P_j$, and hence $\tau_i$ always has lower priority than $\tau_i$. Thus its maximum possible execution units by $t'$ is 
-
-% 	\begin{align*}
-% 		rbf_i(\tau_j,t')=n_j.C_j +\min(C_j,t'-r_j)
-% 	\end{align*}
 % Its maximum possible execution after $r_i$ is
 % 	\begin{align*}
 % 	\begin{split}
@@ -206,17 +206,19 @@ $m'=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_{j,m'}=m'\times T_j$& \\
 
 
 
-% \begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=1]{Figure/C2}  
-% \caption{$P_j> P_i$}
-%   \label{fig:case2}
-% \end{figure}
+\begin{figure}[h!]
+ \centering
+\includegraphics[scale=0.7]{Figure/C2}  
+\caption{$P_j> P_i$}
+  \label{fig:case2}
+\end{figure}
 
-% \textbf{Case 2 ( $P_j> P_i$)~as shown in  Figure~\ref{fig:case2}} $\tau_i$ has higher priority than $\tau_j$'s last job during $[\max(r_j,P_i),P_j]$ if $P_i\leq P_j$:
-% 	\begin{align*}
-% 		rbf_i(\tau_j,t')=\lfloor \frac{t'}{T_j} \rfloor C_j +\min\left(C_j,t'-r_j-\left(\min\{t',P_j\}-\max\{r_j,P_i\}\right)\right)
-% 	\end{align*}
+\textbf{Case 2 ( $P_j> P_i$)~as shown in  Figure~\ref{fig:case2}} $\tau_i$ has higher priority than $\tau_j$'s last job during $[\max(r_j,P_i),P_j]$ if $P_i\leq P_j$:
+	\begin{align*}
+		&rbf_i(\tau_j,t')=\lfloor \frac{t'}{T_j} \rfloor C_j +
+\\&\min\left(C_j,\!t'\!-\!r_j\!-\!\left(\min\{t'\!,\!P_j\}\!-\!\max\{r_j\!,\!P_i\}\right)\right)
+		\end{align*}
+
 % Its maximum possible execution after $r_i$ is
 % \begin{align*}
 % \begin{split}
@@ -247,24 +249,24 @@ $m'=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_{j,m'}=m'\times T_j$& \\
 
 
 
-
-% \subsection{$rbf_i(\tau_j,t')$ when $j> i$}
+% 
+\subsection{$ibf_i(\tau_j,t')$ when $j> i$}
  
 
 
-% \textbf{Case 1.1 ($P_i\leq P_j\wedge r_j\leq r_i$)~as shown in  Figure~\ref{fig:case3}}: $\tau_j$ may execute during $[r_j,r_i]$, and $\tau_j$ would not execute after $r_j$ or $P_i$ unless $\tau_i$ has finished.
+\textbf{Case 1.1 ($P_i\leq P_j\wedge r_j\leq r_i$)~as shown in  Figure~\ref{fig:case3}}: $\tau_j$ may execute during $[r_j,r_i]$, and $\tau_j$ would not execute after $r_j$ or $P_i$ unless $\tau_i$ has finished.
 
 
-% % However we should assume all deadlines before $t'$ is meet. whether we should assume it is meet.
-% 	\begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=1]{Figure/C3}  
-% \caption{$P_i\leq P_j\wedge r_j\leq r_i$}
-%   \label{fig:case3}
-% \end{figure}
-% 		\begin{align*}
-% 		rbf_i(\tau_j,t')=(\lfloor \frac{t'}{T_j} \rfloor)\times C_j+\min(C_j,r_i-r_j)
-% 	\end{align*}
+However we should assume all deadlines before $t'$ is meet. whether we should assume it is meet.
+	\begin{figure}[h!]
+ \centering
+\includegraphics[scale=0.7]{Figure/C3}  
+\caption{$P_i\leq P_j\wedge r_j\leq r_i$}
+  \label{fig:case3}
+\end{figure}
+		\begin{align*}
+		ibf_i(\tau_j,t')=(\lfloor \frac{t'}{T_j} \rfloor)\times C_j+\min(C_j,r_i-r_j)
+	\end{align*}
 % \begin{align*}
 % \begin{split}
 % rbf_{i}^1(\tau_j,t')=rbf_{i}^2(\tau_j,t')=0
@@ -272,18 +274,18 @@ $m'=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_{j,m'}=m'\times T_j$& \\
 % \end{align*}
 
 
-% \textbf{Case 1.2 ($P_i\leq P_j\wedge r_j> r_i$)~as shown in  Figure~\ref{fig:case4}}:  the last job of $\tau_j$ would not execute unless $\tau_i$ finishes. However all previous jobs are assumed to finish because otherwise the deadline miss should be already found. The $n_j-1$ job must already finish by $\min(P_i,r_j-T_j+D_j)$.
+\textbf{Case 1.2 ($P_i\leq P_j\wedge r_j> r_i$)~as shown in  Figure~\ref{fig:case4}}:  the last job of $\tau_j$ would not execute unless $\tau_i$ finishes. However all previous jobs are assumed to finish because otherwise the deadline miss should be already found. The $n_j-1$ job must already finish by $\min(P_i,r_j-T_j+D_j)$.
 
-% 	\begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=1]{Figure/C31}  
-% \caption{$P_i\leq P_j\wedge r_j> r_i$}
-%   \label{fig:case4}
-% \end{figure}
+	\begin{figure}[h!]
+ \centering
+\includegraphics[scale=0.7]{Figure/C31}  
+\caption{$P_i\leq P_j\wedge r_j> r_i$}
+  \label{fig:case4}
+\end{figure}
 
-% 	\begin{align*}
-% 		rbf_i(\tau_j,t')=(n_j)\times C_j
-% 	\end{align*}
+	\begin{align*}
+		rbf_i(\tau_j,t')=(n_j)\times C_j
+	\end{align*}
 % \begin{align*}
 % \begin{split}
 % rbf_{i}^1(\tau_j,t')&=\min(C_j, [\min(P_i,r_j-T_j+D_j)-r_i]_0)\\
@@ -294,10 +296,10 @@ $m'=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_{j,m'}=m'\times T_j$& \\
 % % \my{
 
 
-% \textbf{Case 2.1 ($P_i>P_j\wedge r_j\leq r_i$)~as shown in  Figure~\ref{fig:case5}}:the last job of $\tau_j$ can execute until $\min(t',P_i)$
-% 	\begin{align*}
-% 		rbf_i(\tau_j,t')=(n_j) C_j+\min\left(C_j,r_i-r_j+[\min(t',P_i)-\max(P_j,r_i)]_0\right)
-% 	\end{align*}
+\textbf{Case 2.1 ($P_i>P_j\wedge r_j\leq r_i$)~as shown in  Figure~\ref{fig:case5}}:the last job of $\tau_j$ can execute until $\min(t',P_i)$
+	\begin{align*}
+		rbf_i(\tau_j,t')=&\min\left(C_j,r_i-r_j+[\min(t',P_i)-\max(P_j,r_i)]_0\right)\\&+(n_j) C_j
+	\end{align*}
 % 	\begin{align*}
 % \begin{split}
 % rbf_{i}^1(\tau_j,t')=\min\{C_j,[\min(t',P_i)-\max(P_j,r_i)]_0\}
@@ -309,24 +311,24 @@ $m'=\lfloor \frac{r_i}{T_j}\rfloor$  & $r_{j,m'}=m'\times T_j$& \\
 % \end{split}
 % \end{align*}
 
-% \begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=1]{Figure/C4}  
-% \caption{$P_i>P_j\wedge r_j\leq r_i$}
-%   \label{fig:case5}
-% \end{figure}
+\begin{figure}[h!]
+ \centering
+\includegraphics[scale=0.7]{Figure/C4}  
+\caption{$P_i>P_j\wedge r_j\leq r_i$}
+  \label{fig:case5}
+\end{figure}
 
-% \begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=1]{Figure/C41}  
-% \caption{$P_i>P_j\wedge r_j> r_i $}
-%   \label{fig:case6}
-% \end{figure}
+\begin{figure}[h!]
+ \centering
+\includegraphics[scale=0.7]{Figure/C41}  
+\caption{$P_i>P_j\wedge r_j> r_i $}
+  \label{fig:case6}
+\end{figure}
 
-% \textbf{Case 2.2 ($P_i>P_j\wedge r_j> r_i$)~as shown in  Figure~\ref{fig:case6}}: 
-% \begin{align*}
-% 	rbf_i(\tau_j,t')=(n_j) C_j+\min\left(C_j,[\min(t',P_i)-P_j]_0\right)
-% \end{align*}
+\textbf{Case 2.2 ($P_i>P_j\wedge r_j> r_i$)~as shown in  Figure~\ref{fig:case6}}: 
+\begin{align*}
+	rbf_i(\tau_j,t')=(n_j) C_j+\min\left(C_j,[\min(t',P_i)-P_j]_0\right)
+\end{align*}
 
 
 % \begin{align*}

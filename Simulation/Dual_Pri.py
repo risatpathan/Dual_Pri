@@ -157,7 +157,7 @@ def fsum(tau_i,tau_rest,ts,t):
 	return min(A,B)
 	# return demand
 	# return A
-	# return B
+	# return min(B,demand)
 
 def tbound(tau_i,tau_rest):
 	Csum=0
@@ -184,7 +184,8 @@ def dual_pri_test_task(tau_i,tau_rest):
 		t+=1
 		check_list.append(t)
 	for t in check_list:
-		for ts in xrange(int(t-tau_i.Di),int(t)+1):
+		for ts in xrange(int(t-tau_i.Di+1),int(t)+1):
+		# for ts in xrange(int(t-tau_i.Di+tau_i.pi),int(t)+1):
 			# if t>=432 and ts==430:
 			# 	pdb.set_trace()
 			# 	print tau_i.Ti
@@ -201,38 +202,41 @@ def dual_pri_test_task(tau_i,tau_rest):
 	return True
 
 def dual_pri_test(taskset):
-	flag=True
-	empty=False
-	while flag==True:
-		flag=False
-		for tau_i in taskset:
-			tau_rest=copy(taskset)
-			tau_rest.remove(tau_i)
-			if dual_pri_test_task(tau_i,tau_rest)==False:
-				if tau_i.pi>2:
-					tau_i.pi-=1
-					flag=True
-					break
-				else:
-					return False
-	return True
-	# for tau_i in taskset:
-	# 	tau_rest=copy(taskset)
-	# 	tau_rest.remove(tau_i)
-	# 	if dual_pri_test_task(tau_i,tau_rest)==False:
-	# 		return False
+	# flag=True
+	# empty=False
+	# while flag==True:
+	# 	flag=False
+	# 	for tau_i in taskset:
+	# 		tau_rest=copy(taskset)
+	# 		tau_rest.remove(tau_i)
+	# 		if dual_pri_test_task(tau_i,tau_rest)==False:
+	# 			if tau_i.pi>2:
+	# 				tau_i.pi-=1
+	# 				flag=True
+	# 				break
+	# 			else:
+	# 				return False
 	# return True
+	for tau_i in taskset:
+		tau_rest=copy(taskset)
+		tau_rest.remove(tau_i)
+		if dual_pri_test_task(tau_i,tau_rest)==False:
+			return False
+	return True
 
  
 
 
 x=0
-for i in xrange(0,10):
-	taskset=taskset_generator(0.8,10,100,1)
+for i in xrange(0,100):
+	taskset=taskset_generator(0.95,10,100,1)
 	pri_assign(taskset)
 	promotion_set(taskset)
 	if dual_pri_test(taskset)==True:
+		print 1
 		x+=1
+	else:
+		print 0
 print x
 
 # fsum(tau_2,[tau_1,tau_3],432,432)

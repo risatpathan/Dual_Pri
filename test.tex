@@ -1,0 +1,66 @@
+\section{Dual Priority}
+Given a task system $\tau=\{\tau_1,\tau_2,\ldots, \tau_n\}$, we first make the following \textbf{assumptions}:
+\begin{enumerate}
+	\item Each task  $\tau_i$ has a original priority $n+i$ and a promotion priority $i$.
+	\item Each task has a fixed promotion point $p_i$. The concerned job $J_{i,k}$ has its promotion point $P_i=r_{i,k}+p_i$.
+\end{enumerate}
+
+\my{
+\begin{lemma}[Worst Case  Pattern]
+\label{lemma:pattern}
+Suppose $\tau$ could experience deadline miss with the current priority and promotion point  assignment, then it must be that there exists a busy time interval $[0,t]$  during  which some job of task $\tau_i\in\tau$ would miss its deadline when all other tasks  release their first job at time instant $0$, and all jobs including those released by $\tau_i$ are released as soon as possible with corresponding period.
+\end{lemma}
+\begin{proof}
+Among all possible legal event sequences in which $\tau$ misses some deadline,  let $S$ denote such a sequence where some job of $\tau_i\in \tau$  misses its deadline within the shortest busy interval $[0,t_F]$.  As a result no deadline miss would happens earlier than $t_F$. 
+
+Assuming in the event sequence $S$, there exists some tasks, e.g.,  $\tau_j$ whose first release is not at time instant $0$ and the separation between some job release is greater than  $T_j$. Then as we shift $r_{j,1}$ to $0$ and reduce  time separation  between each job releases to $T_j$, $\tau_i$ would consume no more resource than before.
+
+This is because that all jobs of $\tau_j$ with deadline before $t$ would still meet its deadline (otherwise we can construct a new sequence $S$), while the last job of $\tau_j$ released before $t$ (e.g., $J_{j,m}$) is more likely to  deny processor from $\tau_i$ since the promotion point of job $J_{j,m}$ will also decrease. Therefore after we modify the release pattern of $\tau_j$, $\tau_i$ would still misses its deadline. Finally by repeating the above steps for all such tasks, the deadline miss of $\tau_i$ would still happen at $t_F$. Therefore Lemma 1 is true.
+\end{proof}
+\begin{figure}[h!]
+ \centering
+\includegraphics[scale=0.7]{Figure/WC}  
+\caption{Worst Case  Pattern}
+  \label{fig:case2}
+\end{figure}
+From Lemma~\ref{lemma:pattern} we know that if $\tau$ would  experience some deadline miss, then there exists a $\tau_i$ that will have its  deadline miss with the worst case release pattern defined in Lemma~\ref{lemma:pattern}. Therefore the following corollary can tell us whether a task system $\tau$ is schedulable by the dual priority scheduling algorithm.
+
+\begin{corollary}
+\label{corollary:condition}
+If  $\forall \tau_i\in \tau$ no deadline miss happens for all possible time interval length $t$ with the worst case release pattern:  1) some job of $\tau_i$ has deadline at $t$  and all jobs of $\tau_i$ are released as soon as possible  with period $T_i$; 2) first job of $\tau_j\in \tau-\tau_i$ is released at $0$ and all jobs are released as soon as possible with period $T_j$, then $\tau$ is schedulable by the dual priority scheduling algorithm.
+\end{corollary}
+\begin{proof}
+This corollary is a direct deduction from Lemma~\ref{lemma:pattern}.
+\end{proof}
+
+
+From Corollary~\ref{corollary:condition}, we know  that as along as we can guarantee that $\forall~\tau_i\in \tau:~\forall~t:$ no deadline miss happens with the worst case release pattern,  then we can declare that the task system $\tau$ is schedulable by the dual priority scheduling algorithm. Therefore  in the simplest case,  an exact but computational expensive schedulability test for dual priority scheduling algorithm could be derived by simulating the behavior of the system with the worst case release pattern. 
+
+
+To reduce the complexity, we need a more efficient test to determine whether $\tau_i\in\tau$ is schedulable when jobs are released with the worst case release in Lemma~\ref{lemma:pattern}. Let $ibf_i(\tau_j,t')$ (ibf is short for interference bound function) denote maximum possible resource consumed by $\tau_j\in\tau-\tau_j$ in the system  during the time interval $[0,t']$, and let $dbf(\tau_i,t)$ denotes the maximum execution requirement of $\tau_i$ during $[0,t]$,  when all tasks are released with worst case pattern in Lemma~\ref{lemma:pattern}.\footnote{Note that the two functions are specific for the worst case pattern.}  Therefore the following theorem can be used to determine whether $\tau_i\in \tau$ is schedulable when all jobs in the system is released in the worst case release pattern.
+}
+\begin{theorem}
+\label{theorem:1}
+$\tau_i$ would not experience any deadline miss with the worst case release pattern on a single processor by the dual priority scheduling algorithm if the following condition holds:
+\begin{equation}
+\label{eq:1}
+\forall~t~:\exists~t'\in[t-D_i, t]:~dbf(\tau_i,t)+ibf_i(\tau-\tau_i,t')\leq t'
+\end{equation} 
+where \[ibf_i(\tau-\tau_i,t')=\sum_{\tau_j\in \tau-\tau_i}ibf_i(\tau_j,t')\].
+\end{theorem}
+\begin{proof}
+We can prove the statement that if $\tau_i$ is not schedulable with the worst case release pattern, then Equation~\ref{eq:1} would not hold. Suppose that $\tau_i$ is not schedulable then there are legal event sequences in which $\tau_i$ misses some deadline when $\tau_i$ is assigned with the current priority and promotion point. Let $S'$ denote such a sequence where $\tau_i$ misses deadline at the earliest time at $t$.
+
+It must be the cases that during $[0,t]$ some tasks are executing because otherwise the time interval between the last idle instant to $t$ could also construct such a sequence. Then it must be that during the time interval $[0,t']$, other tasks have consumed an amount of resource more than 
+\[
+ibf_i(\tau-\tau_i,t')>t'-dbf(\tau_i,t)
+\]
+which contradicts the Equation~\ref{eq:1}.
+\end{proof}
+With Theorem~\ref{theorem:1}, we can use the following test to whether a task system $\tau$ is schedulable by the dual priority scheduling algorithm.
+\begin{theorem}
+A task system $\tau$ is schedulable by the dual priority scheduling on unit-speed uniprocessor if the following hold: $\forall \tau_i\in \tau:~\forall~t:~\exists~t'\in[t-D_i, t]:~$
+\begin{equation}
+dbf(\tau_i,t)+ibf_i(\tau-\tau_i,t')\leq t'
+\end{equation}
+\end{theorem}

@@ -35,29 +35,19 @@
 \maketitle  
 
 
+% \input{model}
 \input{test}
-\input{ibf}
+\input{rbf}
+\input{opt}
 
-% According to Baruah (2003, Dynamic- and Static-priority Scheduling of Recurring Real-time Tasks, Theorem~3), $\tau_i$ is schedulable on a single processor using static priority if and only if for each absolute deadline of a job  $d_{i,k}$ where $k\in N$, there exists an interval $d_{i,k-1}\leq t'\leq d_{i,k}$ for which the following condition holds:
-% \begin{equation}
-% dbf(\tau_i,t)+\sum_{\tau_j\in\{hp_i\}}rbf_i(\tau_j,t')\leq t'	
-% \end{equation} 
-
-% Here the demand bound function captures the maximum execution demand of $\tau_i$ for a time interval length $t$ if it is to meet all deadlines.
-% \begin{equation}
-% dbf(\tau_i,t)=\left(\lfloor \frac{t-D_i}{T_i}\rfloor+1\right)\times C_i
-% \end{equation} 
-
-
-% On the other hand, the request bound function  $rbf_i(\tau_j,t')$ denotes the maximum amount of time for which $\tau_j$ could \textbf{deny the processor} to lower priority task $\tau_i$ over some interval length of $t'$. \\\\
 
 
 
 % \begin{equation}
 % \begin{split}
-% ibf_i(\tau-\tau_i,t')=
+% rbf_i(\tau-\tau_i,t')=
 % \begin{cases}
-% &\min\{r_{i,x}, \sum_{\tau_j\in \tau-\tau_i}ibf_i(\tau_j,t')-ibf_i^1(\tau_j,t') \}\\&+\sum_{\tau_j\in \tau-\tau_i}ibf_i^1(\tau_j,t') 								\mbox{if } t'<=P_i\\
+% &\min\{r_{i,x}, \sum_{\tau_j\in \tau-\tau_i}rbf_i(\tau_j,t')-rbf_i^1(\tau_j,t') \}\\&+\sum_{\tau_j\in \tau-\tau_i}rbf_i^1(\tau_j,t') 								\mbox{if } t'<=P_i\\
 % 				fa						&\mbox{otherwise}
 % \end{cases}	
 % \end{split}
@@ -67,17 +57,7 @@
 
 
 
-% \begin{example}
-% As shown in the Figure~1, when $r_i\leq t'\leq P_i$, the execution requirement of $J_{j,k}$ is $C_j$ because $\tau_i$  would execute only after $J_{j,k}$ finishes. However, when $P_i\leq t'\leq P_j$,  the time $J_{j,k}$ deny processor from $\tau_i$ is equal the time that $J_{j,k}$ has already executed, because $\tau_i$ has higher priority than $\tau_j$ during $[P_i,P_j]$.  This is a significantly different from the  static priority scheduling.
-% \begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=1]{Figure/E1}  
-% \caption{Example One}
-%   \label{fig:p3}
-% \end{figure}
-% \end{example}
 
-% Unfortunately, it is hard to calculate the exact time that  $J_{j,k}$  has executed, and therefore here instead,  we would use an upper bound of the resource $J_{i,k}$ has consumed to derive the test.
 
 
 

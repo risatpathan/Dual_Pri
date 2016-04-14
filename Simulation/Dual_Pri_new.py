@@ -36,13 +36,7 @@ def rbf(tau_i,tau_j,ts,t):
 		print "false prioity assignment"
 		raise NameError('no such function')
 
-def rbf_1(tau_i,tau_j,ts,t): # optimization technique  one
-# when j<i i.e., tau_j has higher o_priority
-	if tau_j.o_prio<tau_i.o_prio:
-		return rbf_A_1(tau_i,tau_j,ts,t)
-# when j>i, i.e.,  tau_j has lower o_priority	
-	elif tau_j.o_prio>tau_i.o_prio: 
-		return rbf_B_1(tau_i,tau_j,ts,t)
+
 	
 def rbf_2(tau_i,tau_j,ts,t): # optimization technique  two
 # when j<i i.e., tau_j has higher o_priority
@@ -63,43 +57,29 @@ def rbf_A(tau_i,tau_j,ts,t): 	# when j<i i.e., tau_j has higher o_priority
 		req=nj*tau_j.Ci+min(tau_j.Ci, max(0,ts-rj-(min(ts,Pj)-max(rj,Pi))))
 		return	req
 
-def rbf_A_1(tau_i,tau_j,ts,t):
-	nj,rj,Pj=short_cutj(tau_j,ts)
-	ri,Pi=short_cuti(tau_i,t)
-	rjs=floor(ri/tau_j.Ti)*tau_j.Ti
-	if Pj<=Pi: 
-		if rj<=ri:
-			return min(tau_j.Ci,max(0,ts-ri))
-		else:
-			return min(tau_j.Ci,max(0,ts-rj))+((rj-rjs-tau_j.Ti)/tau_j.Ti)*tau_j.Ci+min(tau_j.Ci, max(0, rjs+tau_j.Di-ri))
-	elif Pj>Pi:	
-		if ts<Pj and rj<=ri:
-			return min(tau_j.Ci,max(0,min(ts,Pi)-ri))
-		elif ts<Pj and rj>ri:
-			return min(tau_j.Ci,max(0,min(ts,max(rj,Pi))-rj))+((rj-rjs-tau_j.Ti)/tau_j.Ti)*tau_j.Ci+min(tau_j.Ci, max(0, rjs+tau_j.Di-ri))
-		elif ts>=Pj and rj<=ri:
-			return min(tau_j.Ci, max(0,ts-ri-(Pj-Pi)))
-		elif ts>=Pj and rj>ri:
-			return min(tau_j.Ci, max(0, ts-rj-(Pj-max(Pi,rj))))+((rj-rjs-tau_j.Ti)/tau_j.Ti)*tau_j.Ci+min(tau_j.Ci, max(0, rjs+tau_j.Di-ri))
+
 
 def rbf_A_2(tau_i,tau_j,ts,t):
-	nj,rj,Pj=short_cutj(tau_j,ts)
-	ri,Pi=short_cuti(tau_i,t)
-	rjw=floor(Pi/tau_j.Ti)*tau_j.Ti
-	if Pj<=Pi: 
-		if rj<=Pi:
-			return min(tau_j.Ci,max(0,ts-Pi))
+	rix,Pix=short_cuti(tau_i,t)
+	if tau_j.Di-tau_j.pi>=tau_j.Ci:
+		rjys=max(0,Pix+tau_j.Ci-tau_j.Di)
+		rjy=rjys+ floor((ts-rjys)/tau_j.Ti)*tau_j.Ti
+		Pjy=rjy+tau_j.pi
+		if rjy==rjys:
+			return min(tau_j.Ci,ts-Pix)
 		else:
-			return  min(tau_j.Ci,max(0,ts-rj))+((rj-rjw-tau_j.Ti)/tau_j.Ti)*tau_j.Ci+min(tau_j.Ci, max(0, rjw+tau_j.Di-Pi))
-	elif Pj>Pi:	
-		if ts<Pj and rj<=Pi:
-			return 0
-		elif ts<Pj and rj>Pi:
-			return ((rj-rjw-tau_j.Ti)/tau_j.Ti)*tau_j.Ci+min(tau_j.Ci, max(0, rjw+tau_j.Di-Pi))
-		elif ts>=Pj and rj<=Pi:
-			return min(ts-Pj,tau_j.Ci)
-		elif ts>=Pj and rj>Pi:
-			return min(tau_j.Ci,max(0,ts-Pj))+((rj-rjw-tau_j.Ti)/tau_j.Ti)*tau_j.Ci+min(tau_j.Ci, max(0, rjw+tau_j.Di-Pi))
+			return tau_j.Ci+(rjy-rjys-tau_j.Ti)*tau_j.Ci/tau_j.Ti+min(tau_j.Ci, max(0,ts-Pjy))
+
+	elif tau_j.Di-tau_j.pi<tau_j.Ci:
+		rjys=max(0,Pix-tau_j.pi)
+		rjy=rjys+ floor((ts-rjys)/tau_j.Ti)*tau_j.Ti
+		Pjy=rjy+tau_j.pi
+		if rjy==rjys:
+			return min(tau_j.Di-tau_j.pi,ts-Pix)
+		else:
+			return tau_j.Di-tau_j.pi+(rjy-rjys-tau_j.Ti)*(tau_j.Di-tau_j.pi)/tau_j.Ti+min(tau_j.Di-tau_j.pi, max(0,ts-Pjy))
+	
+
 	raise NameError('ERROR A2')
 
 
@@ -119,19 +99,6 @@ def rbf_B(tau_i,tau_j,ts,t): # when ij< i.e., tau_i has higher o_priority
 		return nj*tau_j.Ci+min(tau_j.Ci, max(0, min(ts,Pi)-Pj))
 	else:
 		raise NameError('Error B')
-def rbf_B_1(tau_i,tau_j,ts,t):
-	nj,rj,Pj=short_cutj(tau_j,ts)
-	ri,Pi=short_cuti(tau_i,t)
-	if Pi<=Pj and rj<=ri: 
-		return 0
-	elif Pi<=Pj and rj>ri:
-		return min(tau_j.Ci, max(0,	min(Pi,rj-tau_j.Ti+tau_j.Di)-ri ))
-	elif Pi>Pj and rj<=ri:
-		return min(tau_j.Ci, max(0, min(ts,Pi)-max(Pj,ri)  ))
-	elif Pi>Pj and rj>ri:
-		return	min(tau_j.Ci, max(0, min(ts,Pi)-Pj))+min(tau_j.Ci, max(0,rj-tau_j.Ti+tau_j.Di-ri))
-	else:
-		raise NameError('Error B1')
 def rbf_B_2(tau_i,tau_j,ts,t):
 	return 0
 
@@ -140,28 +107,17 @@ def fsum(tau_i,tau_rest,ts,t):
 	b=0
 	ri,Pi=short_cuti(tau_i,t)
 	demand=dbf(tau_i,t)
-	L1=max(0,dbf(tau_i,t)-tau_i.Ci)
-	R1=tau_i.Ci
 	L2=max(0,dbf(tau_i,t)-tau_i.Ci)
-	R2=tau_i.Ci
+	R2=min(dbf(tau_i,t),tau_i.Ci)
 	for tau_j in tau_rest:
 		demand+=rbf(tau_i,tau_j,ts,t)
-		# R1+=rbf_1(tau_i,tau_j,ts,t)
-		# L1+=rbf(tau_i,tau_j,ts,t)-rbf_1(tau_i,tau_j,ts,t)
-		if tau_j.o_prio<tau_i.o_prio:
-			b=tau_j.Ci
-		else: 
-			b=0
 		R2+=rbf_2(tau_i,tau_j,ts,t)+b
 		L2+=rbf(tau_i,tau_j,ts,t)-rbf_2(tau_i,tau_j,ts,t)-b
-	A=min(L1,ri)+R1
 	B=100000000
 	if ts>Pi:
 		B=min(L2,Pi)+R2
 	# print A,B,demand
-	# return min(A,B)
 	# return demand
-	# return A
 	return min(B,demand)
 
 def tbound(tau_i,tau_rest):
@@ -207,34 +163,34 @@ def dual_pri_test_task(tau_i,tau_rest):
 	return True
 
 def dual_pri_test(taskset):
-	flag=True
-	empty=False
-	while flag==True:
-		flag=False
-		for tau_i in taskset:
-			tau_rest=copy(taskset)
-			tau_rest.remove(tau_i)
-			if dual_pri_test_task(tau_i,tau_rest)==False:
-				if tau_i.pi>2:
-					tau_i.pi-=1
-					flag=True
-					break
-				else:
-					return False
-	return True
-	# for tau_i in taskset:
-	# 	tau_rest=copy(taskset)
-	# 	tau_rest.remove(tau_i)
-	# 	if dual_pri_test_task(tau_i,tau_rest)==False:
-	# 		return False
+	# flag=True
+	# empty=False
+	# while flag==True:
+	# 	flag=False
+	# 	for tau_i in taskset:
+	# 		tau_rest=copy(taskset)
+	# 		tau_rest.remove(tau_i)
+	# 		if dual_pri_test_task(tau_i,tau_rest)==False:
+	# 			if tau_i.pi>2:
+	# 				tau_i.pi-=1
+	# 				flag=True
+	# 				break
+	# 			else:
+	# 				return False
 	# return True
+	for tau_i in taskset:
+		tau_rest=copy(taskset)
+		tau_rest.remove(tau_i)
+		if dual_pri_test_task(tau_i,tau_rest)==False:
+			return False
+	return True
 
  
 
 
 x=0
-for i in xrange(0,10):
-	taskset=taskset_generator(0.95,10,100,1)
+for i in xrange(0,20):
+	taskset=taskset_generator(0.97,10,100,1)
 	pri_assign(taskset)
 	promotion_set(taskset)
 	if dual_pri_test(taskset)==True:

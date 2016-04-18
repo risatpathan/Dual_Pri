@@ -1,48 +1,19 @@
 \section{Model}
+In this paper, we will use the classic sporadic task model~\cite{Mok1983}, where a task can be specified as a 4-parameter tuple: $\tau_i=(C_i,D_i,T_i)$, where $C_i$ denotes the worst-case execution time estimate (WCET), $D_i$ denotes the relative deadline and $T_i$ denotes the minimal time separation between two successive job release (or called period). Each job  should execute up to $C_i$ time units before the deadline, and otherwise the system is regarded as failure.
 
-Given a task system $\tau=\{\tau_1,\tau_2,\ldots, \tau_n\}$, we first make the following \textbf{assumptions}:
+Each task has an origin priority and a promoted priority. After $\tau_i$ release a new job $J_{i}$, it is scheduled according to its origin priority. However $J_i$ will be scheduled according to its promoted priority after $p_i$ time units from its release time.
+
+Given a task system $\tau=\{\tau_1,\tau_2,\ldots, \tau_n\}$ sorted according to their origin priority in descending order, we first make the following \textbf{assumptions}:
 \begin{enumerate}
-	\item Each task  $\tau_i$ has a original priority $n+i$ and a promotion priority $i$.
-	\item Each task has a fixed promotion point $p_i$. The concerned job $J_{i,k}$ has its promotion point $P_{i,k}=r_{i,k}+p_i$.
+	\item Each task  $\tau_i$ has a original priority $n+i$ and a promotion priority $i$ (a smaller index implies higher priority).
+	\item Each task has a fixed promotion point $p_i$. The concerned job $J_{i,x}$ has its promotion point $P_{i,x}=r_{i,x}+p_i$,  where $r_{i,x}$ denotes the release time of $J_{i,x}$.
 \end{enumerate}
 
-In this paper, our schedulability analysis of dual priority scheduling is restricted to the case that satisfies the above assumptions. Note that, our analysis in fact can be easily extended to more general systems, but it would be regarded as our future work.  For simplicity, we will only present the restricted version in this paper.
+
+
+In this paper, our schedulability analysis of dual priority scheduling is restricted to the case that satisfies the above assumptions. Note that, our analysis in fact can be easily extended to more general systems, and we may explore in the future.  For simplicity, we will only present the restricted version in this paper.
 
 
 
 
 
-% \my{
-% \begin{lemma}[Worst Case  Pattern]
-% \label{lemma:pattern}
-% Suppose $\tau$ could experience deadline miss with the current priority and promotion point  assignment, then it must be that there exists a busy time interval $[0,t]$  during  which some job of task $\tau_i\in\tau$ would miss its deadline when all other tasks  release their first job at time instant $0$, and all jobs including those released by $\tau_i$ are released as soon as possible with corresponding period.
-% \end{lemma}
-% \begin{proof}
-% Among all possible legal event sequences in which $\tau$ misses some deadline,  let $S$ denote such a sequence where some job $J_{i,x}$ of $\tau_i\in \tau$  misses its deadline within the shortest busy interval $[0,t_F]$.  As a result no deadline miss would happens earlier than $t_F$. 
-
-% Assuming in the event sequence $S$, there exists some tasks, e.g.,  $\tau_j$ whose first release is not at time instant $0$ and the separation between some job release is greater than  $T_j$. Then as we shift $r_{j,1}$ to $0$ and reduce  time separation  between each job releases to $T_j$,  the  total requested execution demand from $\tau-\tau_i$ only increase or stay the same, because all previous jobs  with deadline before $t_F$ would still meet its deadline (otherwise we can construct a new sequence $S$). 
-
-%  Therefore after we modify the release pattern of $\tau_j$, $\tau_i$ would still misses its deadline. Finally by repeating the above steps for all such tasks, the deadline miss of $\tau_i$ would still happen at $t_F$. Therefore Lemma 1 is true.
-% \end{proof}
-% \begin{figure}[h!]
-%  \centering
-% \includegraphics[scale=0.7]{Figure/WC}  
-% \caption{Worst Case  Pattern}
-%   \label{fig:case2}
-% \end{figure}
-% From Lemma~\ref{lemma:pattern} we know that if $\tau$ would  experience some deadline miss, then there exists a $\tau_i$ that will have its  deadline miss with the worst case release pattern defined in Lemma~\ref{lemma:pattern}. Therefore the following corollary can tell us whether a task system $\tau$ is schedulable by the dual priority scheduling algorithm.
-
-% \begin{corollary}
-% \label{corollary:condition}
-% If  $\forall \tau_i\in \tau$ no deadline miss happens for all possible time interval length $t$ with the worst case release pattern:  1) some job of $\tau_i$ has deadline at $t$  and all jobs of $\tau_i$ are released as soon as possible  with period $T_i$; 2) first job of $\tau_j\in \tau-\tau_i$ is released at $0$ and all jobs are released as soon as possible with period $T_j$, then $\tau$ is schedulable by the dual priority scheduling algorithm.
-% \end{corollary}
-% \begin{proof}
-% This corollary is a direct deduction from Lemma~\ref{lemma:pattern}.
-% \end{proof}
-
-
-% From Corollary~\ref{corollary:condition}, we know  that as along as we can guarantee that $\forall~\tau_i\in \tau:~\forall~t:$ no deadline miss happens with the worst case release pattern,  then we can declare that the task system $\tau$ is schedulable by the dual priority scheduling algorithm. Therefore  in the simplest case,  an exact but computational expensive schedulability test for dual priority scheduling algorithm could be derived by simulating the behavior of the system with the worst case release pattern. 
-
-
-% To reduce the complexity, we need a more efficient test to determine whether $\tau_i\in\tau$ is schedulable when jobs are released with the worst case release in Lemma~\ref{lemma:pattern}. Let $rbf_i(\tau_j,t')$ (rbf is short for interference bound function) denote maximum possible resource consumed by $\tau_j\in\tau-\tau_j$ in the system  during the time interval $[0,t']$, and let $dbf(\tau_i,t)$ denotes the maximum execution requirement of $\tau_i$ during $[0,t]$,  when all tasks are released with worst case pattern in Lemma~\ref{lemma:pattern}.\footnote{Note that the two functions are specific for the worst case pattern.}  Therefore the following theorem can be used to determine whether $\tau_i\in \tau$ is schedulable when all jobs in the system is released in the worst case release pattern.
-% }

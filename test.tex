@@ -1,4 +1,4 @@
-\section{Dual Priority}
+\section{Dual Priority Schedulability}
 % According to Baruah (2003, Dynamic- and Static-priority Scheduling of Recurring Real-time Tasks, Theorem~3), $\tau_i$ is schedulable on a single processor using static priority if and only if for each absolute deadline of a job  $d_{i,k}$ where $k\in N$, there exists an interval $d_{i,k-1}\leq t'\leq d_{i,k}$ for which the following condition holds:
 % \begin{equation}
 % dbf(\tau_i,t)+\sum_{\tau_j\in\{hp_i\}}rbf_i(\tau_j,t')\leq t'	
@@ -10,16 +10,15 @@
 % \end{equation} 
 % On the other hand, the request bound function  $rbf_i(\tau_j,t')$ denotes the maximum amount of time for which $\tau_j$ could \textbf{deny the processor} to lower priority task $\tau_i$ over some interval length of $t'$.
 
-
-
+The  following theorem is an exact test to  determine whether $\tau_i$ is schedulable on a single processor using dual priorities.
 \begin{theorem}
 \label{theorem:1}
-$\tau_i$ is schedulable on a single processor using dual priority scheduling if  for each absolute deadline of a job  $d_{i,x}$  where $x\in N$, there exists a $t'$ where $t-D_i\leq t'\leq t~(=d_{i,x})$ for which the following condition holds: 
+A task $\tau_i$ is schedulable on a single processor using dual priority scheduling if  for each absolute deadline of a job  $d_{i,x}$  where $x\in N$, there exists a $t'$ where $t-D_i\leq t'\leq t~(=d_{i,x})$ for which the following condition holds: 
 \begin{equation}
 \label{eq:1}
 C_i+F_i(\tau,t',t)\leq t'
 \end{equation} 
-where $F_i(\tau,t')$ denotes the maximum possible execution resource consumed by  the other jobs released by tasks in the system  except $J_{i,x}$  during $[0,t']$
+where $F_i(\tau,t')$ denotes the maximum possible execution resource consumed by  the other jobs except $J_{i,x}$  released by tasks in the system   during $[0,t']$
 \end{theorem}
 \begin{proof}
 We can prove the statement that if $\tau_i$ is not schedulable, then Equation~\ref{eq:1} would not hold. Suppose that $\tau_i$ is not schedulable, then there are legal event sequences in which deadline $d_{i,x}$ is missed when $\tau_i$ is assigned with the current priority and promotion point. Let $S'$ denote such a sequence where $J_{i,x}$ misses deadline at the earliest time at $t$ (i.e., $d_{i,x}=t$). 
@@ -33,7 +32,7 @@ which contradicts the Equation~\ref{eq:1}.
 
 Therefore a system  is schedulable on a single processor using dual priority scheduling  if and only if all the tasks in the system meet the requirement in Theorem~\ref{theorem:1}, and hence we can  derive the following theorem.
 \begin{theorem}
-A system $\tau$ is schedulable by dual priority scheduling if the following condition holds: $\forall~\tau_i\in \tau:~\forall t\geq D_i:~\exists t'\in[t-D_i,t]$ so that 
+A system $\tau$ is schedulable on a single processor using dual priority scheduling if the following condition holds: $\forall~\tau_i\in \tau:~\forall t\geq D_i:~\exists t'\in[t-D_i,t]$ so that 
 \[
 C_i+F_i(\tau,t',t)\leq t'
 \]
